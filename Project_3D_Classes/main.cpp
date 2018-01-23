@@ -1,17 +1,14 @@
-#include <windows.h>
+//#include <windows.h>
 
-#include <d3d11.h>
-#include <d3dcompiler.h>
-#include <DirectXMath.h>
-#include <chrono>
+//#include <d3d11.h>
+//#include <d3dcompiler.h>
+//#include <DirectXMath.h>
+//#include <chrono>
 
-#pragma comment (lib, "d3d11.lib")
-#pragma comment (lib, "d3dcompiler.lib")
-
-#include "bth_image.h"
+//#include "bth_image.h"
 #include "Window.h"
 
-using namespace DirectX;
+/*using namespace DirectX;
 
 // a resource to store Vertices in the GPU
 ID3D11Buffer* gVertexBuffer = nullptr;
@@ -357,7 +354,8 @@ void changeWorldViewProj(float dt)
 	gDeviceContext->Map(gMatrixs, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
 
 	// World matrix
-	rad += /*0.05f*/ (XM_PI / 4)* dt;
+	//rad += 0.05f;
+	rad += (XM_PI / 4)* dt;
 	if (rad > XM_PI * 2) rad = 0.0f;
 	globalValues.gWorld = XMMatrixTranspose(XMMatrixRotationY(rad));
 
@@ -430,7 +428,7 @@ void Render(float dt)
 
 	// issue a draw call of 3 vertices (similar to OpenGL)
 	gDeviceContext->Draw(6, 0);
-}
+}*/
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {

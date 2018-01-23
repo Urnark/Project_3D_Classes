@@ -22,7 +22,6 @@ DirectX3D::~DirectX3D()
 bool DirectX3D::initialize(int screenWidth, int screenHeight, HWND window, float screenDepth, float screenNear)
 {
 	HRESULT result;
-	int error;
 	DXGI_SWAP_CHAIN_DESC swapChainDesc;
 	D3D11_TEXTURE2D_DESC depthBufferDesc;
 	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
@@ -181,7 +180,7 @@ bool DirectX3D::initialize(int screenWidth, int screenHeight, HWND window, float
 	return true;
 }
 
-void DirectX3D::shutDown()
+void DirectX3D::shutdown()
 {
 	if (this->device)
 	{

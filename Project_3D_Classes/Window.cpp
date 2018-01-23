@@ -67,6 +67,8 @@ bool Window::initWindow()
 	ShowWindow(this->window, SW_SHOW);
 	SetForegroundWindow(this->window);
 	SetFocus(this->window);
+
+	return true;
 }
 
 bool Window::frame(float deltaTime)
@@ -77,7 +79,7 @@ bool Window::frame(float deltaTime)
 		return false;
 	}
 
-	if (!this->graphics->frame())
+	if (!this->graphics->frame(this->input))
 	{
 		return false;
 	}
@@ -116,7 +118,6 @@ bool Window::initialize()
 void Window::run()
 {
 	MSG msg;
-	bool result;
 
 	// Initialize the message structure.
 	ZeroMemory(&msg, sizeof(MSG));

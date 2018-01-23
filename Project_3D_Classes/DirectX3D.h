@@ -2,7 +2,6 @@
 #define DIRECTX3D_H
 
 #include <d3d11.h>
-#include <d3dcompiler.h>
 #include <DirectXMath.h>
 
 class DirectX3D
@@ -27,7 +26,7 @@ public:
 	~DirectX3D();
 
 	bool initialize(int screenWidth, int screenHeight, HWND window, float screenDepth, float screenNear);
-	void shutDown();
+	void shutdown();
 
 	void beginScene(float red, float green, float blue, float alpha);
 	void endScene();

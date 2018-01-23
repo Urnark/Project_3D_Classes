@@ -1,4 +1,4 @@
-Texture2D shaderTexture : register(t0);
+/*Texture2D shaderTexture : register(t0);
 SamplerState SampleType : register(s0);
 
 cbuffer LIGHT : register(b0)
@@ -27,4 +27,15 @@ float4 PS_main(GS_OUT input) : SV_Target
 	final_colour += colour;
 
 	return saturate(final_colour);
+};*/
+
+struct VS_OUT
+{
+	float4 position : SV_POSITION;
+	float4 color : COLOR;
 };
+
+float4 PS_main(VS_OUT input) : SV_TARGET
+{
+	return input.color;
+}
