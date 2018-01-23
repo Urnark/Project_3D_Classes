@@ -5,7 +5,6 @@
 //#include <DirectXMath.h>
 //#include <chrono>
 
-//#include "bth_image.h"
 #include "Window.h"
 
 /*using namespace DirectX;

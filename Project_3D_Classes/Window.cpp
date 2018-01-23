@@ -73,11 +73,16 @@ bool Window::initWindow()
 
 bool Window::frame(float deltaTime)
 {
-	// Check if the user pressed escape.
-	if (input->IsKeyDown(VK_ESCAPE))
+	int mouseX, mouseY;
+
+	// Do the input frame processing.
+	if (!this->input->frame())
 	{
 		return false;
 	}
+
+	// Get the location of the mouse from the input object,
+	this->input->getMouseLocation(mouseX, mouseY);
 
 	if (!this->graphics->frame(this->input))
 	{
@@ -98,7 +103,7 @@ bool Window::initialize()
 	}
 
 	// Initialize the input object.
-	this->input->Initialize();
+	this->input->initialize(this->hInstance, this->window, this->width, this->height);
 
 	this->graphics = new Graphics();
 	if (!this->graphics)
@@ -144,16 +149,17 @@ void Window::run()
 				msg.message = WM_QUIT;
 			}
 		}
+
+		// Check if the user pressed escape and wants to quit.
+		if (this->input->isEscapePressed())
+		{
+			msg.message = WM_QUIT;
+		}
 	}
 }
 
 LRESULT CALLBACK Window::messageHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	if (message == WM_KEYDOWN)
-		input->KeyDown((unsigned int)wParam);
-	if (message == WM_KEYUP)
-		input->KeyUp((unsigned int)wParam);
-
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
@@ -168,8 +174,9 @@ void Window::destroyWindow()
 
 	if (this->input)
 	{
-		delete input;
-		input = nullptr;
+		this->input->shutdown();
+		delete this->input;
+		this->input = nullptr;
 	}
 
 	// Remove the window.

@@ -17,7 +17,7 @@ private:
 	HWND window;
 	LPCSTR applicationName;
 	HINSTANCE hInstance;
-
+	
 	Input* input;
 	Graphics* graphics;
 

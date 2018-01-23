@@ -9,7 +9,7 @@ bool Shader::initializeShader(ID3D11Device * device, HWND window, WCHAR* vsFilen
 	D3D11_INPUT_ELEMENT_DESC polygonLayout[2];
 	unsigned int numElements;
 	D3D11_BUFFER_DESC matrixBufferDesc;
-
+	D3D11_SAMPLER_DESC samplerDesc;
 
 	// Initialize the pointers this function will use to null.
 	errorMessage = 0;
@@ -98,9 +98,9 @@ bool Shader::initializeShader(ID3D11Device * device, HWND window, WCHAR* vsFilen
 	polygonLayout[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 	polygonLayout[0].InstanceDataStepRate = 0;
 
-	polygonLayout[1].SemanticName = "COLOR";
+	polygonLayout[1].SemanticName = "TEXCOORD";
 	polygonLayout[1].SemanticIndex = 0;
-	polygonLayout[1].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	polygonLayout[1].Format = DXGI_FORMAT_R32G32_FLOAT;
 	polygonLayout[1].InputSlot = 0;
 	polygonLayout[1].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
 	polygonLayout[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
@@ -139,6 +139,28 @@ bool Shader::initializeShader(ID3D11Device * device, HWND window, WCHAR* vsFilen
 		return false;
 	}
 
+	// Create a texture sampler state description.
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.MipLODBias = 0.0f;
+	samplerDesc.MaxAnisotropy = 1;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	samplerDesc.BorderColor[0] = 0;
+	samplerDesc.BorderColor[1] = 0;
+	samplerDesc.BorderColor[2] = 0;
+	samplerDesc.BorderColor[3] = 0;
+	samplerDesc.MinLOD = 0;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	// Create the texture sampler state.
+	result = device->CreateSamplerState(&samplerDesc, &this->sampleState);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
 	return true;
 }
 
@@ -171,7 +193,7 @@ void Shader::outputShaderErrorMessage(ID3D10Blob* errorMessage, HWND window, WCH
 	MessageBox(window, "Error compiling shader.  Check shader-error.txt for message.", (LPCSTR)shaderFilename, MB_OK);
 }
 
-bool Shader::setConstantBuffers(ID3D11DeviceContext* deviceContext, DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix, DirectX::XMMATRIX projectionMatrix)
+bool Shader::setShaderParameters(ID3D11DeviceContext* deviceContext, DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix, DirectX::XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture)
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -207,6 +229,9 @@ bool Shader::setConstantBuffers(ID3D11DeviceContext* deviceContext, DirectX::XMM
 	// Finanly set the constant buffer in the vertex shader with the updated values.
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &this->matrixBuffer);
 
+	// Set shader texture resource in the pixel shader.
+	deviceContext->PSSetShaderResources(0, 1, &texture);
+
 	return true;
 }
 
@@ -218,6 +243,9 @@ void Shader::renderShader(ID3D11DeviceContext* deviceContext, int indexCount)
 	// Set the vertex and pixel shaders that will be used to render this triangle.
 	deviceContext->VSSetShader(this->vertexShader, nullptr, 0);
 	deviceContext->PSSetShader(this->pixelShader, nullptr, 0);
+
+	// Set the sampler state in the pixel shader.
+	deviceContext->PSSetSamplers(0, 1, &this->sampleState);
 
 	// Render the triangle.
 	deviceContext->DrawIndexed(indexCount, 0, 0);
@@ -231,6 +259,7 @@ Shader::Shader()
 	this->pixelShader = nullptr;
 	this->layout = nullptr;
 	this->matrixBuffer = nullptr;
+	this->sampleState = nullptr;
 }
 
 Shader::Shader(const Shader &)
@@ -253,6 +282,12 @@ bool Shader::initialize(ID3D11Device* device, HWND window)
 
 void Shader::shutdown()
 {
+	if (this->sampleState)
+	{
+		this->sampleState->Release();
+		this->sampleState = nullptr;
+	}
+
 	if (this->vertexShader)
 	{
 		this->vertexShader->Release();
@@ -278,10 +313,10 @@ void Shader::shutdown()
 	}
 }
 
-bool Shader::render(ID3D11DeviceContext* deviceContext, int indexCount, DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix, DirectX::XMMATRIX projectionMatrix)
+bool Shader::render(ID3D11DeviceContext* deviceContext, int indexCount, DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix, DirectX::XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture)
 {
 	// Set the shader parameters that it will use for rendering.
-	if (!setConstantBuffers(deviceContext, worldMatrix, viewMatrix, projectionMatrix))
+	if (!setShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, texture))
 	{
 		return false;
 	}

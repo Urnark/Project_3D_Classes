@@ -110,6 +110,27 @@ void Graphics::shutdown()
 
 bool Graphics::frame(Input *input)
 {
+	DirectX::XMFLOAT3 v;
+	DirectX::XMStoreFloat3(&v, this->camera->getPosition());
+	if (input->isKeyPressed(DIK_A))
+	{
+		v.x -= 0.001f;
+	}
+	if (input->isKeyPressed(DIK_D))
+	{
+		v.x += 0.001f;
+	}
+	if (input->isKeyPressed(DIK_W))
+	{
+		v.z += 0.001f;
+	}
+	if (input->isKeyPressed(DIK_S))
+	{
+		v.z -= 0.001f;
+	}
+	
+	this->camera->setPosition(v.x, v.y, v.z);
+
 	if (!render())
 	{
 		return false;
@@ -137,7 +158,7 @@ bool Graphics::render()
 	this->model->render(this->directX3D->getDeviceContext());
 
 	// Render the model using the color shader.
-	if (!this->shader->render(this->directX3D->getDeviceContext(), this->model->getIndexCount(), worldMatrix, viewMatrix, projectionMatrix))
+	if (!this->shader->render(this->directX3D->getDeviceContext(), this->model->getIndexCount(), worldMatrix, viewMatrix, projectionMatrix, this->model->getTexture()))
 	{
 		return false;
 	}
