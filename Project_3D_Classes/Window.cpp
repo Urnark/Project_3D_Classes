@@ -83,7 +83,7 @@ bool Window::frame(float deltaTime)
 		return false;
 	}
 
-	if (!this->graphics->frame(deltaTime, this->input, this->width / 2, this->height / 2))
+	if (!this->graphics->frame(deltaTime, this->input, this->width, this->height))
 	{
 		return false;
 	}

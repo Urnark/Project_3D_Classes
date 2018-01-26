@@ -42,6 +42,13 @@ bool Graphics::initialize(int screenWidth, int screenHeight, HWND window)
 	// Set the initial position of the camera.
 	this->camera->setPosition(0.0f, 0.0f, -10.0f);
 
+	this->player = new Player();
+	if (!this->player)
+	{
+		return false;
+	}
+	this->player->initialize(this->camera);
+
 	// Create the model object.
 	this->model = new Model();
 	if (!this->model)
@@ -69,13 +76,6 @@ bool Graphics::initialize(int screenWidth, int screenHeight, HWND window)
 		MessageBox(window, "Could not initialize the color shader object.", "Error", MB_OK);
 		return false;
 	}
-
-	this->player = new Player();
-	if (!this->player)
-	{
-		return false;
-	}
-	this->player->initialize(this->camera);
 
 	return true;
 }

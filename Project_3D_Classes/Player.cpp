@@ -2,8 +2,8 @@
 
 void Player::movment(float dt, Input * input)
 {
-	DirectX::XMVECTOR f = DirectX::XMLoadFloat3(&this->camera->getForward());
-	DirectX::XMVECTOR r = DirectX::XMLoadFloat3(&this->camera->getRight());
+	XMVECTOR f = XMLoadFloat3(&this->camera->getForward());
+	XMVECTOR r = XMLoadFloat3(&this->camera->getRight());
 
 	if (input->isKeyPressed(DIK_A))
 	{
@@ -67,6 +67,7 @@ bool Player::initialize(Camera * camera)
 		return false;
 	}
 
+	this->camera = camera;
 	this->position = camera->getPosition();
 
 	return true;
@@ -92,5 +93,5 @@ void Player::frame(float dt, Input* input, int screenWidth, int screenHeight)
 	XMFLOAT3 v;
 	XMStoreFloat3(&v, this->position);
 	this->camera->setPosition(v.x, v.y, v.z);
-	this->camera->setRotation(pitch, yaw, 0.0f);
+	this->camera->setRotation(this->pitch, this->yaw, this->roll);
 }
