@@ -10,6 +10,9 @@ private:
 	float rotX, rotY, rotZ;
 
 	DirectX::XMMATRIX viewMatrix;
+
+	DirectX::XMVECTOR right;
+	DirectX::XMVECTOR forward;
 public:
 	Camera();
 	Camera(const Camera&);
@@ -23,6 +26,8 @@ public:
 
 	void render();
 	void getViewMatrix(DirectX::XMMATRIX& viewMatrix);
+	DirectX::XMFLOAT3 getRight();
+	DirectX::XMFLOAT3 getForward();
 };
 
 #endif

@@ -26,7 +26,7 @@ private:
 	bool initializeShader(ID3D11Device* device, HWND window, WCHAR* vsFilename, WCHAR* psFilename);
 	void outputShaderErrorMessage(ID3D10Blob* errorMessage, HWND window, WCHAR* shaderFilename);
 
-	bool setShaderParameters(ID3D11DeviceContext* deviceContext, DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix, DirectX::XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture);
+	bool setShaderParameters(ID3D11DeviceContext* deviceContext, DirectX::XMMATRIX &worldMatrix, DirectX::XMMATRIX &viewMatrix, DirectX::XMMATRIX &projectionMatrix, ID3D11ShaderResourceView* texture);
 	void renderShader(ID3D11DeviceContext* deviceContext, int indexCount);
 public:
 	Shader();
@@ -35,7 +35,7 @@ public:
 	
 	bool initialize(ID3D11Device* device, HWND window);
 	void shutdown();
-	bool render(ID3D11DeviceContext* deviceContext, int, DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix, DirectX::XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture);
+	bool render(ID3D11DeviceContext* deviceContext, int, DirectX::XMMATRIX &worldMatrix, DirectX::XMMATRIX &viewMatrix, DirectX::XMMATRIX &projectionMatrix, ID3D11ShaderResourceView* texture);
 };
 
 #endif

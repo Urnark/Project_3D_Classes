@@ -47,6 +47,10 @@ bool Window::initWindow()
 	if (!RegisterClassEx(&wcex))
 		return false;
 
+	// Place the window in the middle of the screen.
+	int posX = (GetSystemMetrics(SM_CXSCREEN) - this->width) / 2;
+	int posY = (GetSystemMetrics(SM_CYSCREEN) - this->height) / 2;
+
 	RECT rc = { 0, 0, this->width, this->height };
 	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
 
@@ -54,8 +58,8 @@ bool Window::initWindow()
 		applicationName,
 		applicationName,
 		WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
+		posX,
+		posY,
 		rc.right - rc.left,
 		rc.bottom - rc.top,
 		nullptr,
@@ -73,18 +77,13 @@ bool Window::initWindow()
 
 bool Window::frame(float deltaTime)
 {
-	int mouseX, mouseY;
-
 	// Do the input frame processing.
 	if (!this->input->frame())
 	{
 		return false;
 	}
 
-	// Get the location of the mouse from the input object,
-	this->input->getMouseLocation(mouseX, mouseY);
-
-	if (!this->graphics->frame(this->input))
+	if (!this->graphics->frame(deltaTime, this->input, this->width / 2, this->height / 2))
 	{
 		return false;
 	}
@@ -117,6 +116,8 @@ bool Window::initialize()
 		return false;
 	}
 
+	this->input->setMouseLocation(this->width / 2, this->height / 2);
+
 	return true;
 }
 
@@ -143,10 +144,14 @@ void Window::run()
 			currentT = std::chrono::high_resolution_clock::now();
 			dt = std::chrono::duration<float>(currentT - preT).count();
 			preT = currentT;
-
-			if (!this->frame(dt))
+			
+			// If the window is in focus then update and render
+			if (GetFocus() == this->window)
 			{
-				msg.message = WM_QUIT;
+				if (!this->frame(dt))
+				{
+					msg.message = WM_QUIT;
+				} 
 			}
 		}
 

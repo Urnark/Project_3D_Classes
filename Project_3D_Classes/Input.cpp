@@ -22,7 +22,7 @@ Input::~Input()
 bool Input::initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeight)
 {
 	HRESULT result;
-
+	this->window = hwnd;
 
 	// Store the screen size which will be used for positioning the mouse cursor.
 	this->screenWidth = screenWidth;
@@ -231,4 +231,23 @@ bool Input::isKeyPressed(int key)
 	}
 
 	return false;
+}
+
+bool Input::isMousePressed()
+{
+	if (this->mouseState.rgbButtons[0])
+	{
+		return true;
+	}
+
+	return false;
+}
+
+void Input::setMouseLocation(int mouseX, int mouseY)
+{
+	RECT rect = { NULL };
+	GetWindowRect(this->window, &rect);
+	SetCursorPos(rect.left + mouseX, rect.top + mouseY);
+	this->mouseX = mouseX;
+	this->mouseY = mouseY;
 }

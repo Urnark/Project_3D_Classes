@@ -193,17 +193,12 @@ void Shader::outputShaderErrorMessage(ID3D10Blob* errorMessage, HWND window, WCH
 	MessageBox(window, "Error compiling shader.  Check shader-error.txt for message.", (LPCSTR)shaderFilename, MB_OK);
 }
 
-bool Shader::setShaderParameters(ID3D11DeviceContext* deviceContext, DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix, DirectX::XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture)
+bool Shader::setShaderParameters(ID3D11DeviceContext* deviceContext, DirectX::XMMATRIX &worldMatrix, DirectX::XMMATRIX &viewMatrix, DirectX::XMMATRIX &projectionMatrix, ID3D11ShaderResourceView* texture)
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	MatrixBufferType* dataPtr;
 	unsigned int bufferNumber;
-
-	// Transpose the matrices to prepare them for the shader.
-	worldMatrix = DirectX::XMMatrixTranspose(worldMatrix);
-	viewMatrix = DirectX::XMMatrixTranspose(viewMatrix);
-	projectionMatrix = DirectX::XMMatrixTranspose(projectionMatrix);
 
 	// Lock the constant buffer so it can be written to.
 	result = deviceContext->Map(this->matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
@@ -216,9 +211,9 @@ bool Shader::setShaderParameters(ID3D11DeviceContext* deviceContext, DirectX::XM
 	dataPtr = (MatrixBufferType*)mappedResource.pData;
 
 	// Copy the matrices into the constant buffer.
-	dataPtr->world = worldMatrix;
-	dataPtr->view = viewMatrix;
-	dataPtr->projection = projectionMatrix;
+	dataPtr->world = DirectX::XMMatrixTranspose(worldMatrix);
+	dataPtr->view = DirectX::XMMatrixTranspose(viewMatrix);
+	dataPtr->projection = DirectX::XMMatrixTranspose(projectionMatrix);
 
 	// Unlock the constant buffer.
 	deviceContext->Unmap(this->matrixBuffer, 0);
@@ -313,7 +308,7 @@ void Shader::shutdown()
 	}
 }
 
-bool Shader::render(ID3D11DeviceContext* deviceContext, int indexCount, DirectX::XMMATRIX worldMatrix, DirectX::XMMATRIX viewMatrix, DirectX::XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture)
+bool Shader::render(ID3D11DeviceContext* deviceContext, int indexCount, DirectX::XMMATRIX &worldMatrix, DirectX::XMMATRIX &viewMatrix, DirectX::XMMATRIX &projectionMatrix, ID3D11ShaderResourceView* texture)
 {
 	// Set the shader parameters that it will use for rendering.
 	if (!setShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, texture))

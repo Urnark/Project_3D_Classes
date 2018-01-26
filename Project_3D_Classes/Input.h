@@ -39,6 +39,7 @@ private:
 
 	int screenWidth, screenHeight;
 	int mouseX, mouseY;
+	HWND window;
 	
 	bool readKeyboard();
 	bool readMouse();
@@ -55,6 +56,8 @@ public:
 	bool isEscapePressed();
 	void getMouseLocation(int &mouseX, int &mouseY);
 	bool isKeyPressed(int key);
+	bool isMousePressed();
+	void setMouseLocation(int mouseX, int mouseY);
 };
 
 #endif

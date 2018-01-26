@@ -32,7 +32,6 @@ bool Graphics::initialize(int screenWidth, int screenHeight, HWND window)
 		return false;
 	}
 
-
 	// Create the camera object.
 	this->camera = new Camera();
 	if (!this->camera)
@@ -71,6 +70,13 @@ bool Graphics::initialize(int screenWidth, int screenHeight, HWND window)
 		return false;
 	}
 
+	this->player = new Player();
+	if (!this->player)
+	{
+		return false;
+	}
+	this->player->initialize(this->camera);
+
 	return true;
 }
 
@@ -92,6 +98,14 @@ void Graphics::shutdown()
 		this->model = nullptr;
 	}
 
+	// Release the player object.
+	if (this->player)
+	{
+		this->player->shutdown();
+		delete this->player;
+		this->player = nullptr;
+	}
+
 	// Release the camera object.
 	if (this->camera)
 	{
@@ -108,28 +122,12 @@ void Graphics::shutdown()
 	}
 }
 
-bool Graphics::frame(Input *input)
+bool Graphics::frame(float dt, Input* input, float screenWidth, float screenHeight)
 {
-	DirectX::XMFLOAT3 v;
-	DirectX::XMStoreFloat3(&v, this->camera->getPosition());
-	if (input->isKeyPressed(DIK_A))
-	{
-		v.x -= 0.001f;
-	}
-	if (input->isKeyPressed(DIK_D))
-	{
-		v.x += 0.001f;
-	}
-	if (input->isKeyPressed(DIK_W))
-	{
-		v.z += 0.001f;
-	}
-	if (input->isKeyPressed(DIK_S))
-	{
-		v.z -= 0.001f;
-	}
-	
-	this->camera->setPosition(v.x, v.y, v.z);
+	//string s = "Right: (px: " + std::to_string(r1.x) + ", py: " + std::to_string(r1.y) + ", pz: " + std::to_string(r1.z) + ")\n";
+	//OutputDebugStringA(s.c_str());
+
+	this->player->frame(dt, input, screenWidth, screenHeight);
 
 	if (!render())
 	{
