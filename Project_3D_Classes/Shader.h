@@ -35,7 +35,7 @@ public:
 	
 	bool initialize(ID3D11Device* device, HWND window);
 	void shutdown();
-	bool render(ID3D11DeviceContext* deviceContext, int, DirectX::XMMATRIX &worldMatrix, DirectX::XMMATRIX &viewMatrix, DirectX::XMMATRIX &projectionMatrix, ID3D11ShaderResourceView* texture);
+	bool render(ID3D11DeviceContext* deviceContext, int indexCount, DirectX::XMMATRIX &worldMatrix, DirectX::XMMATRIX &viewMatrix, DirectX::XMMATRIX &projectionMatrix, ID3D11ShaderResourceView* texture);
 };
 
 #endif

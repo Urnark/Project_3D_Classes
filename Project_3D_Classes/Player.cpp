@@ -75,10 +75,7 @@ bool Player::initialize(Camera * camera)
 
 void Player::shutdown()
 {
-	if (this->camera)
-	{
-		this->camera = nullptr;
-	}
+	this->camera = nullptr;
 }
 
 void Player::frame(float dt, Input* input, int screenWidth, int screenHeight)

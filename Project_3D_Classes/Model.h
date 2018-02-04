@@ -17,6 +17,7 @@ private:
 	{
 		DirectX::XMFLOAT3 position;
 		DirectX::XMFLOAT2 texture;
+		DirectX::XMFLOAT3 normal;
 	};
 
 	bool initializeBuffers(ID3D11Device *device);

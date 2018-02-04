@@ -69,7 +69,7 @@ void Camera::render()
 	lookAt.y = 0.0f;
 	lookAt.z = 1.0f;
 
-	// Set the yaw (rotation around the Y axis), pitch (rotation around the X axis), and roll (rotation around the Z axis) rotations in radians.
+	// Set the yaw (rotation around the Y axis), pitch (rotation around the X axis) and roll (rotation around the Z axis) rotations in radians.
 	pitch = this->rotX * 0.0174532925f;
 	yaw = this->rotY * 0.0174532925f;
 	roll = this->rotZ * 0.0174532925f;
@@ -102,6 +102,54 @@ void Camera::render()
 void Camera::getViewMatrix(DirectX::XMMATRIX& viewMatrix)
 {
 	viewMatrix = this->viewMatrix;
+}
+
+void Camera::renderBaseViewMatrix()
+{
+	DirectX::XMFLOAT3 up, position, lookAt;
+	float yaw, pitch, roll;
+	DirectX::XMMATRIX rotationMatrix;
+
+	// Setup the vector that points upwards.
+	up.x = 0.0f;
+	up.y = 1.0f;
+	up.z = 0.0f;
+
+	// Setup the position of the camera in the world.
+	position.x = this->posX;
+	position.y = this->posY;
+	position.z = this->posZ;
+
+	// Setup where the camera is looking by default.
+	lookAt.x = 0.0f;
+	lookAt.y = 0.0f;
+	lookAt.z = 1.0f;
+
+	// Set the yaw (rotation around the Y axis), pitch (rotation around the X axis) and roll (rotation around the Z axis) rotations in radians.
+	pitch = this->rotX * 0.0174532925f;
+	yaw = this->rotY * 0.0174532925f;
+	roll = this->rotZ * 0.0174532925f;
+
+	// Create the rotation matrix from the yaw, pitch, and roll values.
+	rotationMatrix = DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
+
+	// Transform the lookAt(forward) and up vector by the rotation matrix so the view is correctly rotated at the origin.
+	DirectX::XMStoreFloat3(&lookAt, DirectX::XMVector3TransformCoord(DirectX::XMLoadFloat3(&lookAt), rotationMatrix));
+	DirectX::XMStoreFloat3(&up, DirectX::XMVector3TransformCoord(DirectX::XMLoadFloat3(&up), rotationMatrix));
+
+	// Translate the rotated camera position to the location of the viewer.
+	lookAt.x = position.x + lookAt.x;
+	lookAt.y = position.y + lookAt.y;
+	lookAt.z = position.z + lookAt.z;
+
+	// Finally create the view matrix from the three updated vectors.
+	this->baseViewMatrix = DirectX::XMMatrixLookAtLH(DirectX::XMLoadFloat3(&position), DirectX::XMLoadFloat3(&lookAt), DirectX::XMLoadFloat3(&up));
+}
+
+
+void Camera::getBaseViewMatrix(DirectX::XMMATRIX& viewMatrix)
+{
+	viewMatrix = this->baseViewMatrix;
 }
 
 DirectX::XMFLOAT3 Camera::getRight()

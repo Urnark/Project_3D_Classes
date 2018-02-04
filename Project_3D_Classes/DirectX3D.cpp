@@ -27,7 +27,6 @@ bool DirectX3D::initialize(int screenWidth, int screenHeight, HWND window, float
 	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
 	D3D11_DEPTH_STENCIL_DESC depthDisabledStencilDesc;
 	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
-	D3D11_VIEWPORT viewport;
 	float fieldOfView, screenAspect;
 
 	// Initialize the swap chain description.
@@ -130,15 +129,15 @@ bool DirectX3D::initialize(int screenWidth, int screenHeight, HWND window, float
 	this->deviceContext->OMSetRenderTargets(1, &this->renderTargetView, this->depthStencilView);
 
 	// Setup the viewport for rendering.
-	viewport.Width = (float)screenWidth;
-	viewport.Height = (float)screenHeight;
-	viewport.MinDepth = 0.0f;
-	viewport.MaxDepth = 1.0f;
-	viewport.TopLeftX = 0.0f;
-	viewport.TopLeftY = 0.0f;
+	this->viewport.Width = (float)screenWidth;
+	this->viewport.Height = (float)screenHeight;
+	this->viewport.MinDepth = 0.0f;
+	this->viewport.MaxDepth = 1.0f;
+	this->viewport.TopLeftX = 0.0f;
+	this->viewport.TopLeftY = 0.0f;
 
 	// Create the viewport.
-	this->deviceContext->RSSetViewports(1, &viewport);
+	this->deviceContext->RSSetViewports(1, &this->viewport);
 
 	// Setup the projection matrix.
 	fieldOfView = (float)DirectX::XM_PI / 4.0f;
@@ -282,4 +281,21 @@ DirectX::XMMATRIX DirectX3D::getWorldMatrix()
 DirectX::XMMATRIX DirectX3D::getOrthoMatrix()
 {
 	return this->orthoMatrix;
+}
+
+void DirectX3D::setBackBufferRenderTarget()
+{
+	// Bind the render target view and depth stencil buffer to the output render pipeline.
+	this->deviceContext->OMSetRenderTargets(1, &this->renderTargetView, this->depthStencilView);
+
+	return;
+}
+
+
+void DirectX3D::resetViewport()
+{
+	// Set the viewport.
+	this->deviceContext->RSSetViewports(1, &this->viewport);
+
+	return;
 }

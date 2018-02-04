@@ -16,6 +16,7 @@ private:
 	ID3D11DepthStencilState* depthStencilState;
 	ID3D11DepthStencilState* depthDisabledStencilState;
 	ID3D11DepthStencilView* depthStencilView;
+	D3D11_VIEWPORT viewport;
 	DirectX::XMMATRIX projectionMatrix;
 	DirectX::XMMATRIX worldMatrix;
 	DirectX::XMMATRIX orthoMatrix;
@@ -40,6 +41,9 @@ public:
 	DirectX::XMMATRIX getProjectionMatrix();
 	DirectX::XMMATRIX getWorldMatrix();
 	DirectX::XMMATRIX getOrthoMatrix();
+
+	void setBackBufferRenderTarget();
+	void resetViewport();
 };
 
 #endif

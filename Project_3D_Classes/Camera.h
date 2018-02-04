@@ -10,6 +10,7 @@ private:
 	float rotX, rotY, rotZ;
 
 	DirectX::XMMATRIX viewMatrix;
+	DirectX::XMMATRIX baseViewMatrix;
 
 	DirectX::XMVECTOR right;
 	DirectX::XMVECTOR forward;
@@ -26,6 +27,9 @@ public:
 
 	void render();
 	void getViewMatrix(DirectX::XMMATRIX& viewMatrix);
+	void renderBaseViewMatrix();
+	void getBaseViewMatrix(DirectX::XMMATRIX& viewMatrix);
+
 	DirectX::XMFLOAT3 getRight();
 	DirectX::XMFLOAT3 getForward();
 };
